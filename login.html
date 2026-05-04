@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - TCM Travel Channel Manager</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:#333; line-height:1.6; background:#f5f8f6; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.card { background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:48px 40px; max-width:420px; width:90%; text-align:center; }
+.card h1 { font-size:1.5em; color:#1a8a5c; margin-bottom:8px; }
+.card p { color:#666; margin-bottom:32px; font-size:0.95em; }
+.btn-tiktok, .btn-youtube { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:16px; border-radius:10px; text-decoration:none; font-size:1em; font-weight:600; margin-bottom:14px; transition:transform 0.15s,box-shadow 0.15s; }
+.btn-tiktok { background:#000; color:#fff; }
+.btn-tiktok:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.2); }
+.btn-youtube { background:#ff0000; color:#fff; }
+.btn-youtube:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(255,0,0,0.2); }
+.btn-icon { font-size:1.5em; }
+.note { font-size:0.8em; color:#999; margin-top:20px; }
+.note a { color:#1a8a5c; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Sign In</h1>
+  <p>Choose a platform to connect your account. You will be securely redirected to the platform's authorization page.</p>
+
+  <a href="https://www.tiktok.com/v2/auth/authorize?client_key=awhu3qbg4jtky56i&scope=user.info.basic,video.publish&response_type=code&redirect_uri=https://linctaichina-afk.github.io/tcm-travel-privacy/" class="btn-tiktok">
+    <span class="btn-icon">♪</span> Continue with TikTok
+  </a>
+
+  <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=959034902903-o5f3vr9brh181ks45d4cmqb0jil1qdrl.apps.googleusercontent.com&redirect_uri=https://linctaichina-afk.github.io/tcm-travel-privacy/&response_type=code&scope=https://www.googleapis.com/auth/youtube.upload" class="btn-youtube">
+    <span class="btn-icon">▶</span> Continue with YouTube
+  </a>
+
+  <div class="note">
+    By signing in, you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.
+  </div>
+</div>
+</body>
+</html>
