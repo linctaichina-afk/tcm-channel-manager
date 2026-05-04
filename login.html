@@ -18,7 +18,31 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .btn-icon { font-size:1.5em; }
 .note { font-size:0.8em; color:#999; margin-top:20px; }
 .note a { color:#1a8a5c; }
-.info { font-size:0.75em; color:#999; margin:-10px 0 18px 0; }
+
+/* --- 醒目审核提示 --- */
+.review-banner {
+  background:#fff3cd;
+  border:1px solid #ffc107;
+  border-radius:10px;
+  padding:16px 14px;
+  margin-bottom:24px;
+  text-align:left;
+}
+.review-banner .rb-title {
+  font-weight:700;
+  font-size:1em;
+  color:#856404;
+  margin-bottom:4px;
+}
+.review-banner .rb-desc {
+  font-size:0.9em;
+  color:#856404;
+  line-height:1.5;
+}
+.review-banner .rb-desc a {
+  color:#533f03;
+  text-decoration:underline;
+}
 </style>
 </head>
 <body>
@@ -26,10 +50,24 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
   <h1>Sign In</h1>
   <p>Choose a platform to connect your account. You will be securely redirected to the platform's authorization page.</p>
 
+  <!-- TikTok 审核提示 -->
+  <div class="review-banner">
+    <div class="rb-title">⏳ TikTok App — Under Review</div>
+    <div class="rb-desc">
+      Our TikTok app is currently under review by TikTok. The login button below demonstrates the OAuth authorization flow.
+      Once approved, you will be able to sign in and start publishing content.
+      <br><br>
+      <strong>Chinese:</strong> TikTok 应用正在审核中。下方的按钮展示了完整的 OAuth 授权流程。
+      审核通过后即可正常登录和使用发布功能。
+      <br><br>
+      <a href="https://developers.tiktok.com/apps/" target="_blank">View TikTok Developer Dashboard →</a>
+      (for reviewers: verify our app submission status)
+    </div>
+  </div>
+
   <a href="https://www.tiktok.com/v2/auth/authorize?client_key=awhu3qbg4jtky56i&scope=user.info.basic,video.publish&response_type=code&redirect_uri=https://linctaichina-afk.github.io/tcm-travel-privacy/" class="btn-tiktok">
     <span class="btn-icon">♪</span> Continue with TikTok
   </a>
-  <div class="info">TikTok 正在审核中，审核通过后即可使用</div>
 
   <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=225938592399-d7v1g0hjm8buvpkj4leduroe66nuncag.apps.googleusercontent.com&redirect_uri=https://linctaichina-afk.github.io/tcm-travel-privacy/&response_type=code&scope=https://www.googleapis.com/auth/youtube.upload" class="btn-youtube">
     <span class="btn-icon">▶</span> Continue with YouTube
