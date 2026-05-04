@@ -16,10 +16,23 @@ h2 { color:#1a8a5c; margin:30px 0 15px; font-size:1.5em; }
 .feature { background:#f5f8f6; padding:20px; border-radius:8px; }
 .feature h3 { color:#1a8a5c; margin-bottom:8px; }
 .feature p { font-size:0.95em; color:#555; }
+
+/* Login Buttons Section */
+.login-section { text-align:center; padding:40px 20px; background:#f0f7f3; border-radius:12px; margin:30px 0; }
+.login-section h2 { margin-top:0; }
+.login-section p { color:#555; margin-bottom:25px; }
+.login-buttons { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
+.btn-tiktok, .btn-youtube { display:inline-flex; align-items:center; gap:10px; padding:14px 32px; border-radius:8px; text-decoration:none; font-size:1em; font-weight:600; transition:transform 0.15s,box-shadow 0.15s; cursor:pointer; border:none; }
+.btn-tiktok { background:#000; color:#fff; }
+.btn-tiktok:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(0,0,0,0.3); }
+.btn-youtube { background:#ff0000; color:#fff; }
+.btn-youtube:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(255,0,0,0.3); }
+.btn-icon { font-size:1.5em; line-height:1; }
+
 .contact { background:#f5f8f6; text-align:center; padding:30px; border-radius:8px; margin-top:30px; }
 .contact a { color:#1a8a5c; text-decoration:none; }
 footer { text-align:center; padding:20px; color:#888; font-size:0.85em; border-top:1px solid #eee; margin-top:40px; }
-@media(max-width:600px){ .features { grid-template-columns:1fr; } .hero h1 { font-size:1.8em; } }
+@media(max-width:600px){ .features { grid-template-columns:1fr; } .hero h1 { font-size:1.8em; } .login-buttons { flex-direction:column; align-items:center; } }
 </style>
 </head>
 <body>
@@ -28,6 +41,20 @@ footer { text-align:center; padding:20px; color:#888; font-size:0.85em; border-t
   <p>Schedule, manage, and publish video content across your social media channels. Built for Traditional Chinese Medicine travel content creators.</p>
 </div>
 <div class="container">
+
+<!-- Login Section -->
+<div class="login-section">
+  <h2>Connect Your Accounts</h2>
+  <p>Sign in to manage your channels and start publishing content automatically.</p>
+  <div class="login-buttons">
+    <a href="https://www.tiktok.com/v2/auth/authorize?client_key=awhu3qbg4jtky56i&scope=user.info.basic,video.publish&response_type=code&redirect_uri=https://linctaichina-afk.github.io/tcm-travel-privacy/" class="btn-tiktok">
+      <span class="btn-icon">♪</span> Login with TikTok
+    </a>
+    <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=959034902903-o5f3vr9brh181ks45d4cmqb0jil1qdrl.apps.googleusercontent.com&redirect_uri=https://linctaichina-afk.github.io/tcm-travel-privacy/&response_type=code&scope=https://www.googleapis.com/auth/youtube.upload" class="btn-youtube">
+      <span class="btn-icon">▶</span> Login with YouTube
+    </a>
+  </div>
+</div>
 
 <h2>Features</h2>
 <div class="features">
@@ -53,7 +80,7 @@ footer { text-align:center; padding:20px; color:#888; font-size:0.85em; border-t
 <p>TCM Travel Channel Manager is a content management tool designed for creators who share Traditional Chinese Medicine travel experiences. It integrates with popular social media platforms to streamline your content workflow.</p>
 
 <h2>Platforms</h2>
-<p>Currently supports integration with TikTok. More platforms coming soon.</p>
+<p>Currently supports integration with TikTok and YouTube. More platforms coming soon.</p>
 
 <div class="contact">
   <h3>Contact Us</h3>
