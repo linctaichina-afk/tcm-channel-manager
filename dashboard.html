@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>仪表盘 - TCM 频道管家</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f0f2f5; color:#333; min-height:100vh; }
+.topbar { background:linear-gradient(135deg,#1a8a5c,#0d6b3d); color:#fff; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topbar h1 { font-size:1.2em; }
+.topbar a { color:#fff; text-decoration:none; opacity:0.8; font-size:0.85em; }
+.topbar a:hover { opacity:1; }
+.container { max-width:960px; margin:auto; padding:24px; }
+
+/* Connected banner */
+.connected-banner { display:none; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:12px; padding:20px; margin-bottom:24px; align-items:center; gap:16px; }
+.connected-banner.show { display:flex; }
+.connected-banner .avatar { width:48px; height:48px; border-radius:50%; background:#1a8a5c; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.3em; flex-shrink:0; }
+.connected-banner .avatar img { width:48px; height:48px; border-radius:50%; object-fit:cover; }
+.connected-banner .info { flex:1; }
+.connected-banner .info h2 { font-size:1em; margin-bottom:2px; }
+.connected-banner .info p { font-size:0.85em; color:#555; }
+.connected-banner .badge { background:#1a8a5c; color:#fff; padding:4px 12px; border-radius:20px; font-size:0.75em; white-space:nowrap; }
+
+/* Not connected */
+.not-connected { display:block; text-align:center; padding:60px 20px; background:#fff; border-radius:12px; margin-bottom:24px; }
+.not-connected.hide { display:none; }
+.not-connected .icon { font-size:3em; margin-bottom:12px; }
+.not-connected h2 { font-size:1.2em; margin-bottom:8px; }
+.not-connected p { color:#666; margin-bottom:20px; font-size:0.9em; }
+.not-connected a { display:inline-flex; align-items:center; gap:8px; background:#ff0000; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; font-size:0.95em; }
+
+/* Feature cards */
+.section-title { font-size:1.1em; font-weight:600; margin:32px 0 16px; color:#444; }
+.cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.card { background:#fff; border-radius:12px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,0.06); transition:transform 0.15s,box-shadow 0.15s; }
+.card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.1); }
+.card .icon { font-size:2em; margin-bottom:12px; }
+.card h3 { font-size:1em; margin-bottom:6px; }
+.card p { font-size:0.85em; color:#666; line-height:1.5; }
+.card .tag { display:inline-block; background:#f0f7f3; color:#1a8a5c; padding:2px 10px; border-radius:12px; font-size:0.75em; margin-top:10px; }
+
+/* Loading state */
+.loading { text-align:center; padding:40px; color:#888; }
+.loading .spinner { display:inline-block; width:32px; height:32px; border:3px solid #e0e0e0; border-top-color:#1a8a5c; border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Errors */
+.error-box { display:none; background:#fff3f3; border:1px solid #ffcdd2; border-radius:12px; padding:20px; margin-bottom:24px; color:#c62828; font-size:0.9em; }
+
+footer { text-align:center; padding:32px; color:#999; font-size:0.8em; }
+footer a { color:#1a8a5c; text-decoration:none; }
+@media(max-width:600px){ .cards { grid-template-columns:1fr; } .connected-banner.show { flex-wrap:wrap; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>TCM 频道管家</h1>
+  <a href="/tcm-channel-manager/">← 返回首页</a>
+</div>
+
+<div class="container">
+
+  <!-- Loading -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>正在加载频道信息...</p>
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="error-box"></div>
+
+  <!-- Connected success banner -->
+  <div id="connected" class="connected-banner">
+    <div class="avatar" id="avatar">▶</div>
+    <div class="info">
+      <h2 id="channel-name">YouTube 频道</h2>
+      <p id="channel-stats">订阅者: -- | 视频: --</p>
+    </div>
+    <span class="badge">已连接</span>
+  </div>
+
+  <!-- Not connected prompt -->
+  <div id="not-connected" class="not-connected">
+    <div class="icon">▶</div>
+    <h2>尚未连接 YouTube</h2>
+    <p>连接您的 YouTube 频道即可开始管理内容与自动发布。</p>
+    <a href="https://gentle-dew-a1e5.linctaichina.workers.dev/auth">连接 YouTube 频道</a>
+  </div>
+
+  <!-- Feature cards -->
+  <h2 class="section-title">功能面板</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="icon">📤</div>
+      <h3>视频发布</h3>
+      <p>上传视频、设置标题描述、选择发布时间。支持一键发布到多个平台。</p>
+      <span class="tag">即将上线</span>
+    </div>
+    <div class="card">
+      <div class="icon">📂</div>
+      <h3>内容管理</h3>
+      <p>管理您的视频库，使用标签和分类整理内容，快速查找和编辑视频信息。</p>
+      <span class="tag">即将上线</span>
+    </div>
+    <div class="card">
+      <div class="icon">📅</div>
+      <h3>排期日历</h3>
+      <p>以日历视图规划内容发布日期，拖拽调整排期，避免内容冲突。</p>
+      <span class="tag">即将上线</span>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <h3>数据分析</h3>
+      <p>追踪各平台发布状态、观看数据、频道增长趋势，用数据驱动内容策略。</p>
+      <span class="tag">即将上线</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="terms.html">服务条款</a> &nbsp;|&nbsp; <a href="privacy.html">隐私政策</a>
+  <br><br>
+  &copy; 2026 TCM 频道管家
+</footer>
+
+<script>
+(async function() {
+  const params = new URLSearchParams(window.location.search);
+  const justConnected = params.get('connected') === 'youtube';
+
+  if (justConnected && window.history) {
+    window.history.replaceState({}, '', '/tcm-channel-manager/dashboard.html');
+  }
+
+  const elLoading = document.getElementById('loading');
+  const elConnected = document.getElementById('connected');
+  const elNotConnected = document.getElementById('not-connected');
+  const elError = document.getElementById('error');
+  const elName = document.getElementById('channel-name');
+  const elStats = document.getElementById('channel-stats');
+  const elAvatar = document.getElementById('avatar');
+
+  try {
+    let resp = await fetch('https://gentle-dew-a1e5.linctaichina.workers.dev/me');
+    if (resp.status === 401) {
+      elLoading.style.display = 'none';
+      elNotConnected.classList.remove('hide');
+      return;
+    }
+    if (!resp.ok) throw new Error('请求失败 (' + resp.status + ')');
+    let data = await resp.json();
+
+    if (data.items && data.items.length > 0) {
+      let ch = data.items[0];
+      let snippet = ch.snippet || {};
+      let stats = ch.statistics || {};
+      elName.textContent = snippet.title || 'YouTube 频道';
+      let subs = stats.subscriberCount ? parseInt(stats.subscriberCount).toLocaleString() : '--';
+      let vids = stats.videoCount || '--';
+      elStats.textContent = '订阅者: ' + subs + ' | 视频: ' + vids;
+      if (snippet.thumbnails && snippet.thumbnails.default) {
+        elAvatar.innerHTML = '<img src="' + snippet.thumbnails.default.url + '" alt="avatar">';
+      }
+      elLoading.style.display = 'none';
+      elConnected.classList.add('show');
+    } else {
+      elLoading.style.display = 'none';
+      elNotConnected.classList.remove('hide');
+    }
+  } catch(e) {
+    elLoading.style.display = 'none';
+    elError.style.display = 'block';
+    elError.textContent = '加载频道信息失败: ' + e.message;
+    elNotConnected.classList.remove('hide');
+  }
+})();
+</script>
+</body>
+</html>
