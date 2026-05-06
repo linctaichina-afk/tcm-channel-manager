@@ -82,8 +82,8 @@ footer a { color:#1a8a5c; text-decoration:none; }
     <span class="badge">已连接</span>
   </div>
 
-  <!-- Not connected prompt -->
-  <div id="not-connected" class="not-connected">
+  <!-- Not connected prompt - hidden by default -->
+  <div id="not-connected" class="not-connected" style="display:none;">
     <div class="icon">▶</div>
     <h2>尚未连接 YouTube</h2>
     <p>连接您的 YouTube 频道即可开始管理内容与自动发布。</p>
@@ -97,25 +97,21 @@ footer a { color:#1a8a5c; text-decoration:none; }
       <div class="icon">📤</div>
       <h3>视频发布</h3>
       <p>上传视频、设置标题描述、选择发布时间。支持一键发布到多个平台。</p>
-      <span class="tag">即将上线</span>
     </div>
     <div class="card">
       <div class="icon">📂</div>
       <h3>内容管理</h3>
       <p>管理您的视频库，使用标签和分类整理内容，快速查找和编辑视频信息。</p>
-      <span class="tag">即将上线</span>
     </div>
     <div class="card">
       <div class="icon">📅</div>
       <h3>排期日历</h3>
       <p>以日历视图规划内容发布日期，拖拽调整排期，避免内容冲突。</p>
-      <span class="tag">即将上线</span>
     </div>
     <div class="card">
       <div class="icon">📊</div>
       <h3>数据分析</h3>
       <p>追踪各平台发布状态、观看数据、频道增长趋势，用数据驱动内容策略。</p>
-      <span class="tag">即将上线</span>
     </div>
   </div>
 
@@ -148,7 +144,7 @@ footer a { color:#1a8a5c; text-decoration:none; }
     let resp = await fetch('https://gentle-dew-a1e5.linctaichina.workers.dev/me');
     if (resp.status === 401) {
       elLoading.style.display = 'none';
-      elNotConnected.classList.remove('hide');
+      elNotConnected.style.display = 'block';
       return;
     }
     if (!resp.ok) throw new Error('请求失败 (' + resp.status + ')');
@@ -175,7 +171,7 @@ footer a { color:#1a8a5c; text-decoration:none; }
     elLoading.style.display = 'none';
     elError.style.display = 'block';
     elError.textContent = '加载频道信息失败: ' + e.message;
-    elNotConnected.classList.remove('hide');
+    elNotConnected.style.display = 'block';
   }
 })();
 </script>
