@@ -328,8 +328,8 @@ function uid() {
       elHistory.innerHTML = items.map(item => {
         const statusClass = item.status === 'completed' ? 'completed' : item.status === 'failed' ? 'failed' : 'uploading';
         const statusText = item.status === 'completed' ? '已完成' : item.status === 'failed' ? '失败' : '上传中';
-        const ytLink = item.youtube_video_id ? ` | <a href="https://youtube.com/watch?v=${item.youtube_video_id}" target="_blank">查看视频</a>` : '';
-        return `<div class="history-item"><span class="status ${statusClass}"></span><div class="info"><div class="title">${item.video_title}</div><div class="meta">${item.created_at} | ${statusText}${ytLink}</div></div></div>`;
+        const ytLink = item.youtube_video_id ? ' | <a href="https://youtube.com/watch?v=' + item.youtube_video_id + '" target="_blank">查看视频</a>' : '';
+        return '<div class="history-item"><span class="status ' + statusClass + '"></span><div class="info"><div class="title">' + item.video_title + '</div><div class="meta">' + item.created_at + ' | ' + statusText + ytLink + '</div></div></div>';
       }).join('');
     } catch(e) {
       elHistory.innerHTML = '<div class="history-item" style="justify-content:center;color:#999;padding:30px;">加载失败</div>';
