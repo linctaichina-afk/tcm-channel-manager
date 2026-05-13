@@ -7,12 +7,16 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f0f2f5; color:#333; min-height:100vh; }
-.topbar { background:linear-gradient(135deg,#1a8a5c,#0d6b3d); color:#fff; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topbar { background:linear-gradient(135deg,#1a8a5c,#0d6b3d); color:#fff; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
 .topbar h1 { font-size:1.2em; }
-.topbar a { color:#fff; text-decoration:none; opacity:0.8; font-size:0.85em; }
+.topbar-actions { display:flex; align-items:center; gap:12px; }
+.topbar a { color:#fff; text-decoration:none; opacity:0.8; font-size:0.85em; transition:opacity 0.15s; }
 .topbar a:hover { opacity:1; }
-.container { max-width:960px; margin:auto; padding:24px; }
+.topbar .disconnect-btn { background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:6px; font-size:0.8em; border:1px solid rgba(255,255,255,0.25); cursor:pointer; color:#fff; }
+.topbar .disconnect-btn:hover { background:rgba(255,255,255,0.25); }
+.container { max-width:1100px; margin:auto; padding:24px; }
 
+/* Connected banner */
 .connected-banner { display:none; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:12px; padding:20px 24px; margin-bottom:24px; align-items:center; gap:16px; }
 .connected-banner.show { display:flex; }
 .connected-banner .avatar { width:48px; height:48px; border-radius:50%; background:#1a8a5c; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.3em; flex-shrink:0; overflow:hidden; }
@@ -22,6 +26,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .connected-banner .info p { font-size:0.85em; color:#555; }
 .connected-banner .badge { background:#1a8a5c; color:#fff; padding:4px 12px; border-radius:20px; font-size:0.75em; }
 
+/* Not connected */
 .not-connected { display:none; text-align:center; padding:60px 20px; background:#fff; border-radius:12px; margin-bottom:24px; }
 .not-connected.show { display:block; }
 .not-connected .icon { font-size:3em; margin-bottom:12px; }
@@ -29,23 +34,21 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .not-connected p { color:#666; margin-bottom:20px; font-size:0.9em; }
 .not-connected a { display:inline-flex; align-items:center; gap:8px; background:#ff0000; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; font-size:0.95em; }
 
-.section-title { font-size:1.1em; font-weight:600; margin:32px 0 16px; color:#444; }
-.cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.card { background:#fff; border-radius:12px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,0.06); transition:transform 0.15s,box-shadow 0.15s; cursor:default; }
-.card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.1); }
-.card .icon { font-size:2em; margin-bottom:12px; }
-.card h3 { font-size:1em; margin-bottom:6px; }
-.card p { font-size:0.85em; color:#666; line-height:1.5; }
+/* Tabs */
+.tabs { display:none; margin-bottom:24px; }
+.tabs.show { display:flex; }
+.tab-btn { flex:1; padding:14px 10px; border:none; background:#fff; color:#666; font-size:0.9em; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; text-align:center; }
+.tab-btn:hover { background:#f9f9f9; color:#333; }
+.tab-btn.active { color:#1a8a5c; border-bottom-color:#1a8a5c; background:#fff; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
 
-.loading { text-align:center; padding:40px; color:#888; }
-.loading .spinner { display:inline-block; width:32px; height:32px; border:3px solid #e0e0e0; border-top-color:#1a8a5c; border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:12px; }
-@keyframes spin { to { transform:rotate(360deg); } }
-
+/* Upload section (Tab 1) */
 .upload-section { background:#fff; border-radius:12px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,0.06); margin-bottom:24px; }
 .upload-section h3 { margin-bottom:16px; font-size:1em; }
-.upload-section input, .upload-section textarea, .upload-section select { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:0.9em; margin-bottom:12px; outline:none; }
+.upload-section input, .upload-section textarea, .upload-section select { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:0.9em; margin-bottom:12px; outline:none; font-family:inherit; }
 .upload-section input:focus, .upload-section textarea:focus { border-color:#1a8a5c; }
-.upload-section textarea { min-height:80px; resize:vertical; font-family:inherit; }
+.upload-section textarea { min-height:80px; resize:vertical; }
 .upload-section .file-area { border:2px dashed #ddd; border-radius:8px; padding:30px; text-align:center; cursor:pointer; margin-bottom:12px; transition:border-color 0.15s; }
 .upload-section .file-area:hover { border-color:#1a8a5c; }
 .upload-section .file-area.dragover { border-color:#1a8a5c; background:#f0f7f3; }
@@ -59,7 +62,77 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .upload-progress.show { display:block; }
 .progress-bar { height:6px; background:#e0e0e0; border-radius:3px; overflow:hidden; margin-top:8px; }
 .progress-bar .fill { height:100%; background:#1a8a5c; width:0%; transition:width 0.3s; border-radius:3px; }
+.schedule-toggle { display:flex; align-items:center; gap:8px; margin-bottom:12px; font-size:0.9em; color:#555; cursor:pointer; }
+.schedule-toggle input { width:auto; margin:0; }
+.schedule-datetime { display:none; }
+.schedule-datetime.show { display:block; }
 
+/* Video grid (Tab 2) */
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.video-card { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.06); transition:transform 0.15s,box-shadow 0.15s; }
+.video-card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.1); }
+.video-card .thumb { width:100%; aspect-ratio:16/9; background:#e0e0e0; object-fit:cover; display:block; }
+.video-card .body { padding:14px; }
+.video-card .body h4 { font-size:0.9em; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.video-card .body .meta { font-size:0.78em; color:#999; margin-bottom:10px; }
+.video-card .actions { display:flex; gap:8px; }
+.video-card .actions button { flex:1; padding:8px; border:none; border-radius:6px; font-size:0.8em; cursor:pointer; font-weight:600; }
+.video-card .actions .edit-btn { background:#e8f5e9; color:#1a8a5c; }
+.video-card .actions .edit-btn:hover { background:#c8e6c9; }
+.video-card .actions .del-btn { background:#ffebee; color:#e53935; }
+.video-card .actions .del-btn:hover { background:#ffcdd2; }
+.empty-state { text-align:center; padding:60px 20px; background:#fff; border-radius:12px; color:#999; font-size:0.9em; }
+.empty-state .icon { font-size:2.5em; margin-bottom:12px; }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:#fff; border-radius:12px; padding:24px; width:90%; max-width:480px; box-shadow:0 8px 32px rgba(0,0,0,0.2); }
+.modal h3 { margin-bottom:16px; font-size:1em; }
+.modal input, .modal textarea { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:0.9em; margin-bottom:12px; outline:none; font-family:inherit; }
+.modal input:focus, .modal textarea:focus { border-color:#1a8a5c; }
+.modal textarea { min-height:80px; resize:vertical; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+.modal-actions button { padding:10px 20px; border:none; border-radius:8px; font-size:0.9em; font-weight:600; cursor:pointer; }
+.modal-actions .cancel-btn { background:#f0f0f0; color:#666; }
+.modal-actions .cancel-btn:hover { background:#e0e0e0; }
+.modal-actions .save-btn { background:#1a8a5c; color:#fff; }
+.modal-actions .save-btn:hover { background:#0d6b3d; }
+
+/* Schedule table (Tab 3) */
+.schedule-table-wrap { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.schedule-table { width:100%; border-collapse:collapse; }
+.schedule-table th { text-align:left; padding:14px 16px; font-size:0.8em; color:#888; text-transform:uppercase; background:#f9f9f9; border-bottom:1px solid #eee; }
+.schedule-table td { padding:14px 16px; font-size:0.88em; border-bottom:1px solid #f5f5f5; }
+.schedule-table tr:last-child td { border-bottom:none; }
+.schedule-table .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.78em; font-weight:600; }
+.schedule-table .status-badge.pending { background:#fff3e0; color:#e65100; }
+.schedule-table .status-badge.completed { background:#e8f5e9; color:#1a8a5c; }
+.schedule-table .status-badge.cancelled { background:#f5f5f5; color:#999; }
+.schedule-table .cancel-schedule-btn { background:#ffebee; color:#e53935; border:none; padding:6px 14px; border-radius:6px; font-size:0.8em; cursor:pointer; font-weight:600; }
+.schedule-table .cancel-schedule-btn:hover { background:#ffcdd2; }
+
+/* Analytics (Tab 4) */
+.analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+.analytics-card { background:#fff; border-radius:12px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.analytics-card .label { font-size:0.85em; color:#888; margin-bottom:8px; }
+.analytics-card .value { font-size:2em; font-weight:700; color:#333; }
+.analytics-card .value .icon { font-size:0.6em; vertical-align:middle; margin-right:6px; }
+.analytics-card .sub { font-size:0.78em; color:#999; margin-top:4px; }
+.analytics-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.analytics-row .analytics-card { text-align:center; }
+.analytics-row .analytics-card .value { font-size:1.6em; }
+
+/* Footer */
+footer { text-align:center; padding:32px; color:#999; font-size:0.8em; }
+footer a { color:#1a8a5c; text-decoration:none; }
+
+/* Loading */
+.loading { text-align:center; padding:40px; color:#888; }
+.loading .spinner { display:inline-block; width:32px; height:32px; border:3px solid #e0e0e0; border-top-color:#1a8a5c; border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Upload history */
 .history-list { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
 .history-item { display:flex; align-items:center; gap:12px; padding:14px 20px; border-bottom:1px solid #f0f0f0; }
 .history-item:last-child { border-bottom:none; }
@@ -71,17 +144,19 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .history-item .info .title { font-size:0.9em; }
 .history-item .info .meta { font-size:0.78em; color:#999; }
 .history-item .info .meta a { color:#1a8a5c; text-decoration:none; }
+.section-title { font-size:1em; font-weight:600; margin:24px 0 14px; color:#444; }
 
-footer { text-align:center; padding:32px; color:#999; font-size:0.8em; }
-footer a { color:#1a8a5c; text-decoration:none; }
-@media(max-width:600px){ .cards { grid-template-columns:1fr; } }
+@media(max-width:700px){ .analytics-grid { grid-template-columns:1fr; } .analytics-row { grid-template-columns:1fr; } .tab-btn { font-size:0.78em; padding:12px 6px; } .schedule-table th, .schedule-table td { padding:10px 10px; font-size:0.8em; } }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <h1>TCM 频道管家</h1>
-  <a href="/tcm-channel-manager/">← 返回首页</a>
+  <div class="topbar-actions">
+    <a href="/tcm-channel-manager/">← 返回首页</a>
+    <button class="disconnect-btn" id="disconnect-btn" style="display:none;" title="断开 YouTube 连接">🔌 断开连接</button>
+  </div>
 </div>
 
 <div class="container">
@@ -99,7 +174,7 @@ footer a { color:#1a8a5c; text-decoration:none; }
       <h2 id="channel-name">YouTube 频道</h2>
       <p id="channel-stats">订阅者: -- | 视频: --</p>
     </div>
-    <span class="badge">已连接</span>
+    <span class="badge" id="connected-badge">已连接</span>
   </div>
 
   <!-- Not connected -->
@@ -110,33 +185,135 @@ footer a { color:#1a8a5c; text-decoration:none; }
     <a id="connect-btn" href="#">连接 YouTube 频道</a>
   </div>
 
-  <!-- Upload section -->
-  <div id="upload-section" class="upload-section" style="display:none;">
-    <h3>📤 发布视频</h3>
-    <div class="file-area" id="file-area">
-      <div class="icon">🎬</div>
-      <p>点击选择视频文件 或 拖拽文件到此处</p>
-      <div class="filename" id="filename"></div>
+  <!-- Tabs -->
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="tab1">📹 视频发布</button>
+    <button class="tab-btn" data-tab="tab2">📋 内容管理</button>
+    <button class="tab-btn" data-tab="tab3">📅 定时上传</button>
+    <button class="tab-btn" data-tab="tab4">📊 数据分析</button>
+  </div>
+
+  <!-- ====== TAB 1: 视频发布 ====== -->
+  <div class="tab-content active" id="tab1">
+    <div class="upload-section" id="upload-section" style="display:none;">
+      <h3>📤 发布视频</h3>
+      <div class="file-area" id="file-area">
+        <div class="icon">🎬</div>
+        <p>点击选择视频文件 或 拖拽文件到此处</p>
+        <div class="filename" id="filename"></div>
+      </div>
+      <input type="file" id="file-input" accept="video/*" style="display:none">
+      <input type="text" id="video-title" placeholder="视频标题（必填）" required>
+      <textarea id="video-desc" placeholder="视频描述（选填）"></textarea>
+      <select id="video-privacy">
+        <option value="unlisted">不公开（获得链接即可观看）</option>
+        <option value="public">公开</option>
+        <option value="private">私密</option>
+      </select>
+
+      <!-- 定时发布开关 -->
+      <label class="schedule-toggle">
+        <input type="checkbox" id="schedule-toggle-check"> ⏰ 定时发布
+      </label>
+      <div class="schedule-datetime" id="schedule-datetime">
+        <input type="datetime-local" id="schedule-datetime-input">
+      </div>
+
+      <button class="upload-btn" id="upload-btn">发布到 YouTube</button>
+      <div class="upload-progress" id="upload-progress">
+        <p id="progress-text">准备上传...</p>
+        <div class="progress-bar"><div class="fill" id="progress-fill"></div></div>
+      </div>
     </div>
-    <input type="file" id="file-input" accept="video/*" style="display:none">
-    <input type="text" id="video-title" placeholder="视频标题（必填）" required>
-    <textarea id="video-desc" placeholder="视频描述（选填）"></textarea>
-    <select id="video-privacy">
-      <option value="unlisted">不公开（获得链接即可观看）</option>
-      <option value="public">公开</option>
-      <option value="private">私密</option>
-    </select>
-    <button class="upload-btn" id="upload-btn">上传到 YouTube</button>
-    <div class="upload-progress" id="upload-progress">
-      <p id="progress-text">准备上传...</p>
-      <div class="progress-bar"><div class="fill" id="progress-fill"></div></div>
+
+    <!-- Upload history -->
+    <h2 class="section-title">📋 上传记录</h2>
+    <div id="history-list" class="history-list">
+      <div class="history-item" style="justify-content:center;color:#999;padding:30px;">暂无上传记录</div>
     </div>
   </div>
 
-  <!-- Upload history -->
-  <h2 class="section-title">📋 上传记录</h2>
-  <div id="history-list" class="history-list">
-    <div class="history-item" style="justify-content:center;color:#999;padding:30px;">暂无上传记录</div>
+  <!-- ====== TAB 2: 内容管理 ====== -->
+  <div class="tab-content" id="tab2">
+    <div id="video-grid-container">
+      <div class="loading" id="video-loading">
+        <div class="spinner"></div>
+        <p>正在加载视频列表...</p>
+      </div>
+      <div class="empty-state" id="video-empty" style="display:none;">
+        <div class="icon">🎞️</div>
+        <p>暂无视频</p>
+      </div>
+      <div class="video-grid" id="video-grid"></div>
+    </div>
+  </div>
+
+  <!-- ====== TAB 3: 定时上传 ====== -->
+  <div class="tab-content" id="tab3">
+    <div id="schedule-container">
+      <div class="loading" id="schedule-loading">
+        <div class="spinner"></div>
+        <p>正在加载排期...</p>
+      </div>
+      <div class="empty-state" id="schedule-empty" style="display:none;">
+        <div class="icon">📅</div>
+        <p>暂无定时上传排期</p>
+      </div>
+      <div class="schedule-table-wrap" id="schedule-table-wrap" style="display:none;">
+        <table class="schedule-table">
+          <thead>
+            <tr><th>视频标题</th><th>排期时间</th><th>状态</th><th>创建时间</th><th>操作</th></tr>
+          </thead>
+          <tbody id="schedule-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== TAB 4: 数据分析 ====== -->
+  <div class="tab-content" id="tab4">
+    <div id="analytics-container">
+      <div class="loading" id="analytics-loading">
+        <div class="spinner"></div>
+        <p>正在加载数据...</p>
+      </div>
+      <div id="analytics-content" style="display:none;">
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <div class="label">📺 频道订阅者</div>
+            <div class="value" id="stat-subs">--</div>
+          </div>
+          <div class="analytics-card">
+            <div class="label">🎬 总视频数</div>
+            <div class="value" id="stat-videos">--</div>
+          </div>
+        </div>
+        <div class="analytics-row">
+          <div class="analytics-card">
+            <div class="label">👁️ 总观看次数</div>
+            <div class="value" id="stat-views">--</div>
+          </div>
+          <div class="analytics-card">
+            <div class="label">📤 总上传数</div>
+            <div class="value" id="stat-uploads-total">--</div>
+          </div>
+          <div class="analytics-card">
+            <div class="label">✅ 上传成功</div>
+            <div class="value" id="stat-uploads-completed">--</div>
+          </div>
+        </div>
+        <div class="analytics-grid" style="margin-top:16px;">
+          <div class="analytics-card">
+            <div class="label">⏳ 排期中</div>
+            <div class="value" id="stat-uploads-pending">--</div>
+          </div>
+          <div class="analytics-card">
+            <div class="label">👤 用户 ID</div>
+            <div class="value" style="font-size:1em;word-break:break-all;" id="stat-user-id">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -146,6 +323,19 @@ footer a { color:#1a8a5c; text-decoration:none; }
   <br><br>
   &copy; 2026 TCM 频道管家
 </footer>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>✏️ 编辑视频</h3>
+    <input type="text" id="edit-title" placeholder="视频标题">
+    <textarea id="edit-desc" placeholder="视频描述"></textarea>
+    <div class="modal-actions">
+      <button class="cancel-btn" id="edit-cancel">取消</button>
+      <button class="save-btn" id="edit-save">保存修改</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const WORKER = 'https://gentle-dew-a1e5.linctaichina.workers.dev';
@@ -160,30 +350,90 @@ function uid() {
   return id;
 }
 
-(async function() {
+(function() {
   const params = new URLSearchParams(window.location.search);
   const justConnected = params.get('connected') === 'youtube';
 
-  // Clean URL
   if (justConnected && window.history) {
     window.history.replaceState({}, '', DASHBOARD);
   }
 
+  const userId = uid();
+  let connected = false;
+
+  // DOM refs
   const elLoading = document.getElementById('loading');
   const elConnected = document.getElementById('connected');
   const elNotConnected = document.getElementById('not-connected');
   const elName = document.getElementById('channel-name');
   const elStats = document.getElementById('channel-stats');
   const elAvatar = document.getElementById('avatar');
+  const elTabs = document.getElementById('tabs');
+  const elDisconnect = document.getElementById('disconnect-btn');
   const elUpload = document.getElementById('upload-section');
-  const elHistory = document.getElementById('history-list');
 
-  const userId = uid();
-
-  // Set connect button
+  // Connect button
   document.getElementById('connect-btn').href = WORKER + '/auth?user_id=' + encodeURIComponent(userId);
 
-  // File upload UI
+  // ====== Tab switching ======
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById(this.dataset.tab).classList.add('active');
+
+      // Lazy load data for tabs
+      const tab = this.dataset.tab;
+      if (tab === 'tab2' && connected) loadMyVideos();
+      if (tab === 'tab3' && connected) loadSchedules();
+      if (tab === 'tab4' && connected) loadAnalytics();
+    });
+  });
+
+  // ====== Disconnect ======
+  elDisconnect.addEventListener('click', function() {
+    if (confirm('确定断开 YouTube 连接？')) {
+      localStorage.removeItem('tcm_user_id');
+      window.location.href = DASHBOARD;
+    }
+  });
+
+  // ====== Edit Modal ======
+  const editModal = document.getElementById('edit-modal');
+  const editTitle = document.getElementById('edit-title');
+  const editDesc = document.getElementById('edit-desc');
+  let editingVideoId = null;
+
+  document.getElementById('edit-cancel').onclick = () => { editModal.classList.remove('show'); editingVideoId = null; };
+  editModal.onclick = (e) => { if (e.target === editModal) { editModal.classList.remove('show'); editingVideoId = null; } };
+
+  document.getElementById('edit-save').onclick = async () => {
+    const title = editTitle.value.trim();
+    const desc = editDesc.value.trim();
+    if (!title) { alert('请输入视频标题'); return; }
+    if (!editingVideoId) return;
+
+    try {
+      const resp = await fetch(WORKER + '/video/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, video_id: editingVideoId, title, description: desc })
+      });
+      const data = await resp.json();
+      if (data.ok) {
+        editModal.classList.remove('show');
+        editingVideoId = null;
+        loadMyVideos();
+      } else {
+        alert('更新失败: ' + (data.error || '未知错误'));
+      }
+    } catch(e) {
+      alert('更新失败: ' + e.message);
+    }
+  };
+
+  // ====== File upload UI ======
   const fileArea = document.getElementById('file-area');
   const fileInput = document.getElementById('file-input');
   const fileName = document.getElementById('filename');
@@ -202,16 +452,70 @@ function uid() {
     fileName.style.display = 'block';
   }
 
-  // Upload button
+  // ====== Schedule toggle ======
+  const scheduleToggle = document.getElementById('schedule-toggle-check');
+  const scheduleDatetime = document.getElementById('schedule-datetime');
+  scheduleToggle.onchange = () => {
+    scheduleDatetime.classList.toggle('show', scheduleToggle.checked);
+  };
+
+  // ====== Upload / Publish ======
   document.getElementById('upload-btn').onclick = async () => {
     const title = document.getElementById('video-title').value.trim();
     if (!title) { alert('请输入视频标题'); return; }
-    if (!selectedFile) { alert('请选择视频文件'); return; }
 
     const btn = document.getElementById('upload-btn');
     const prog = document.getElementById('upload-progress');
     const progFill = document.getElementById('progress-fill');
     const progText = document.getElementById('progress-text');
+
+    // If scheduled
+    if (scheduleToggle.checked) {
+      const scheduledTime = document.getElementById('schedule-datetime-input').value;
+      if (!scheduledTime) { alert('请选择定时发布时间'); return; }
+      const scheduledISO = new Date(scheduledTime).toISOString();
+
+      btn.disabled = true;
+      btn.textContent = '排期发布中...';
+      prog.classList.add('show');
+      progText.textContent = '正在创建排期...';
+      progFill.style.width = '50%';
+
+      try {
+        const resp = await fetch(WORKER + '/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            title: title,
+            description: document.getElementById('video-desc').value,
+            privacy: document.getElementById('video-privacy').value,
+            scheduled_time: scheduledISO
+          })
+        });
+        const data = await resp.json();
+        if (data.id) {
+          progFill.style.width = '100%';
+          progText.textContent = '✅ 排期创建成功！';
+          // Reset
+          document.getElementById('video-title').value = '';
+          document.getElementById('video-desc').value = '';
+          scheduleToggle.checked = false;
+          scheduleDatetime.classList.remove('show');
+          loadSchedules();
+        } else {
+          throw new Error(data.error || '排期失败');
+        }
+      } catch(e) {
+        progText.textContent = '❌ ' + e.message;
+      }
+      btn.textContent = scheduleToggle.checked ? '排期发布' : '发布到 YouTube';
+      btn.disabled = false;
+      return;
+    }
+
+    // Normal upload
+    if (!selectedFile) { alert('请选择视频文件'); return; }
 
     btn.disabled = true;
     btn.textContent = '准备上传...';
@@ -220,7 +524,6 @@ function uid() {
     progFill.style.width = '10%';
 
     try {
-      // Step 1: Get upload URL from Worker
       const urlParams = new URLSearchParams({
         user_id: userId,
         title: title,
@@ -235,7 +538,6 @@ function uid() {
       progText.textContent = '正在上传到 YouTube...';
       progFill.style.width = '30%';
 
-      // Step 2: Upload video directly to YouTube
       const uploadResp = await fetch(data.uploadUrl, {
         method: 'PUT',
         headers: { 'Content-Type': selectedFile.type || 'video/mp4', 'Content-Length': selectedFile.size },
@@ -249,75 +551,80 @@ function uid() {
 
       progFill.style.width = '90%';
 
-      // Get YouTube video ID from response
       const location = uploadResp.headers.get('Location');
       const ytId = location ? location.match(/[a-zA-Z0-9_-]{11}/)?.[0] || '' : '';
 
-      // Step 3: Confirm
       if (ytId) {
         await fetch(WORKER + '/confirm-upload?upload_id=' + data.uploadId + '&youtube_id=' + ytId + '&user_id=' + userId);
       }
 
       progFill.style.width = '100%';
       progText.textContent = '✅ 上传成功！' + (ytId ? ' YouTube ID: ' + ytId : '');
-      btn.textContent = '上传到 YouTube';
-      btn.disabled = false;
+      btn.textContent = '发布到 YouTube';
 
-      // Reset form
       selectedFile = null;
       fileName.style.display = 'none';
       document.getElementById('video-title').value = '';
       document.getElementById('video-desc').value = '';
       fileInput.value = '';
-
-      // Refresh history
       loadHistory();
 
     } catch(e) {
       progText.textContent = '❌ ' + e.message;
-      btn.textContent = '上传到 YouTube';
-      btn.disabled = false;
     }
+    btn.textContent = '发布到 YouTube';
+    btn.disabled = false;
   };
 
-  // Load user info
-  try {
-    let resp = await fetch(WORKER + '/me?user_id=' + encodeURIComponent(userId));
-    if (resp.status === 401) {
-      elLoading.style.display = 'none';
-      elNotConnected.classList.add('show');
-      return;
-    }
-    if (!resp.ok) throw new Error('请求失败 (' + resp.status + ')');
-    let data = await resp.json();
-
-    if (data.items && data.items.length > 0) {
-      let ch = data.items[0];
-      let snippet = ch.snippet || {};
-      let stats = ch.statistics || {};
-      elName.textContent = snippet.title || 'YouTube 频道';
-      let subs = stats.subscriberCount ? parseInt(stats.subscriberCount).toLocaleString() : '--';
-      let vids = stats.videoCount || '--';
-      elStats.textContent = '订阅者: ' + subs + ' | 视频: ' + vids;
-      if (snippet.thumbnails && snippet.thumbnails.default) {
-        elAvatar.innerHTML = '<img src="' + snippet.thumbnails.default.url + '" alt="avatar">';
+  // ====== Load user info ======
+  (async function() {
+    try {
+      let resp = await fetch(WORKER + '/me?user_id=' + encodeURIComponent(userId));
+      if (resp.status === 401) {
+        elLoading.style.display = 'none';
+        elNotConnected.classList.add('show');
+        return;
       }
-      elLoading.style.display = 'none';
-      elConnected.classList.add('show');
-      elUpload.style.display = 'block';
-      loadHistory();
-    } else {
+      if (!resp.ok) throw new Error('请求失败 (' + resp.status + ')');
+      let data = await resp.json();
+
+      if (data.items && data.items.length > 0) {
+        let ch = data.items[0];
+        let snippet = ch.snippet || {};
+        let stats = ch.statistics || {};
+        elName.textContent = snippet.title || 'YouTube 频道';
+        let subs = stats.subscriberCount ? parseInt(stats.subscriberCount).toLocaleString() : '--';
+        let vids = stats.videoCount || '--';
+        elStats.textContent = '订阅者: ' + subs + ' | 视频: ' + vids;
+        if (snippet.thumbnails && snippet.thumbnails.default) {
+          elAvatar.innerHTML = '<img src="' + snippet.thumbnails.default.url + '" alt="avatar">';
+        }
+        elLoading.style.display = 'none';
+        elConnected.classList.add('show');
+        elTabs.classList.add('show');
+        elDisconnect.style.display = 'inline-block';
+        elUpload.style.display = 'block';
+        connected = true;
+
+        // Load initial data
+        loadHistory();
+        loadMyVideos();
+        loadSchedules();
+        loadAnalytics();
+      } else {
+        elLoading.style.display = 'none';
+        elNotConnected.classList.add('show');
+      }
+    } catch(e) {
       elLoading.style.display = 'none';
       elNotConnected.classList.add('show');
+      elNotConnected.querySelector('p').textContent = '加载失败: ' + e.message;
     }
-  } catch(e) {
-    elLoading.style.display = 'none';
-    elNotConnected.classList.add('show');
-    elNotConnected.querySelector('p').textContent = '加载失败: ' + e.message;
-  }
+  })();
 
-  // Load upload history
+  // ====== Load upload history ======
   async function loadHistory() {
+    const elHistory = document.getElementById('history-list');
     try {
       let resp = await fetch(WORKER + '/uploads?user_id=' + encodeURIComponent(userId));
       let items = await resp.json();
@@ -334,6 +641,174 @@ function uid() {
     } catch(e) {
       elHistory.innerHTML = '<div class="history-item" style="justify-content:center;color:#999;padding:30px;">加载失败</div>';
     }
+  }
+
+  // ====== Load my videos (Tab 2) ======
+  async function loadMyVideos() {
+    const grid = document.getElementById('video-grid');
+    const loading = document.getElementById('video-loading');
+    const empty = document.getElementById('video-empty');
+    try {
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+
+      let resp = await fetch(WORKER + '/my-videos?user_id=' + encodeURIComponent(userId));
+      let items = await resp.json();
+      if (!items || items.length === 0) {
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+      loading.style.display = 'none';
+      grid.innerHTML = items.map(v => {
+        const thumb = v.thumbnail || '';
+        const views = v.viewCount ? parseInt(v.viewCount).toLocaleString() : '0';
+        const date = v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('zh-CN') : '--';
+        return '<div class="video-card">' +
+          (thumb ? '<img class="thumb" src="' + thumb + '" alt="thumbnail" loading="lazy">' : '<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#ccc;font-size:2em;">🎬</div>') +
+          '<div class="body"><h4>' + v.title + '</h4>' +
+          '<div class="meta">📅 ' + date + ' &nbsp;👁️ ' + views + '</div>' +
+          '<div class="actions">' +
+          '<button class="edit-btn" data-video-id="' + v.id + '" data-title="' + escAttr(v.title) + '" data-desc="' + escAttr(v.description || '') + '">✏️ 编辑</button>' +
+          '<button class="del-btn" data-video-id="' + v.id + '" data-title="' + escAttr(v.title) + '">🗑️ 删除</button>' +
+          '</div></div></div>';
+      }).join('');
+
+      // Attach edit events
+      grid.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.onclick = () => {
+          editingVideoId = btn.dataset.videoId;
+          editTitle.value = btn.dataset.title;
+          editDesc.value = btn.dataset.desc;
+          editModal.classList.add('show');
+        };
+      });
+
+      // Attach delete events
+      grid.querySelectorAll('.del-btn').forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm('确定删除视频「' + btn.dataset.title + '」？')) return;
+          try {
+            const resp = await fetch(WORKER + '/video/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: userId, video_id: btn.dataset.videoId })
+            });
+            const data = await resp.json();
+            if (data.ok) {
+              loadMyVideos();
+            } else {
+              alert('删除失败: ' + (data.error || '未知错误'));
+            }
+          } catch(e) {
+            alert('删除失败: ' + e.message);
+          }
+        };
+      });
+
+    } catch(e) {
+      loading.style.display = 'none';
+      empty.style.display = 'block';
+      empty.querySelector('p').textContent = '加载失败: ' + e.message;
+    }
+  }
+
+  // ====== Load schedules (Tab 3) ======
+  async function loadSchedules() {
+    const tbody = document.getElementById('schedule-tbody');
+    const loading = document.getElementById('schedule-loading');
+    const empty = document.getElementById('schedule-empty');
+    const tableWrap = document.getElementById('schedule-table-wrap');
+    try {
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      tableWrap.style.display = 'none';
+
+      let resp = await fetch(WORKER + '/schedules?user_id=' + encodeURIComponent(userId));
+      let items = await resp.json();
+      if (!items || items.length === 0) {
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+      loading.style.display = 'none';
+      tableWrap.style.display = 'block';
+
+      tbody.innerHTML = items.map(s => {
+        const statusClass = s.status === 'pending' ? 'pending' : s.status === 'completed' ? 'completed' : 'cancelled';
+        const statusText = s.status === 'pending' ? '排期中' : s.status === 'completed' ? '已完成' : '已取消';
+        const schedTime = s.scheduled_time ? new Date(s.scheduled_time).toLocaleString('zh-CN') : '--';
+        const createTime = s.created_at ? new Date(s.created_at).toLocaleString('zh-CN') : '--';
+        const cancelBtn = s.status === 'pending'
+          ? '<button class="cancel-schedule-btn" data-id="' + s.id + '" data-title="' + escAttr(s.video_title) + '">取消排期</button>'
+          : '--';
+        return '<tr><td>' + s.video_title + '</td><td>' + schedTime + '</td><td><span class="status-badge ' + statusClass + '">' + statusText + '</span></td><td>' + createTime + '</td><td>' + cancelBtn + '</td></tr>';
+      }).join('');
+
+      tbody.querySelectorAll('.cancel-schedule-btn').forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm('确定取消排期「' + btn.dataset.title + '」？')) return;
+          try {
+            const resp = await fetch(WORKER + '/schedule/cancel', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: userId, schedule_id: parseInt(btn.dataset.id) })
+            });
+            const data = await resp.json();
+            if (data.ok) {
+              loadSchedules();
+            } else {
+              alert('取消失败: ' + (data.error || '未知错误'));
+            }
+          } catch(e) {
+            alert('取消失败: ' + e.message);
+          }
+        };
+      });
+
+    } catch(e) {
+      loading.style.display = 'none';
+      empty.style.display = 'block';
+      empty.querySelector('p').textContent = '加载失败: ' + e.message;
+    }
+  }
+
+  // ====== Load analytics (Tab 4) ======
+  async function loadAnalytics() {
+    const loading = document.getElementById('analytics-loading');
+    const content = document.getElementById('analytics-content');
+    try {
+      loading.style.display = 'block';
+      content.style.display = 'none';
+
+      let resp = await fetch(WORKER + '/analytics/summary?user_id=' + encodeURIComponent(userId));
+      let data = await resp.json();
+
+      if (data.channel) {
+        document.getElementById('stat-subs').textContent = data.channel.subscriberCount != null ? parseInt(data.channel.subscriberCount).toLocaleString() : '--';
+        document.getElementById('stat-videos').textContent = data.channel.videoCount != null ? data.channel.videoCount : '--';
+        document.getElementById('stat-views').textContent = data.channel.viewCount != null ? parseInt(data.channel.viewCount).toLocaleString() : '--';
+      }
+      if (data.uploads) {
+        document.getElementById('stat-uploads-total').textContent = data.uploads.total ?? '--';
+        document.getElementById('stat-uploads-completed').textContent = data.uploads.completed ?? '--';
+        document.getElementById('stat-uploads-pending').textContent = data.uploads.pending ?? '--';
+      }
+      document.getElementById('stat-user-id').textContent = userId;
+
+      loading.style.display = 'none';
+      content.style.display = 'block';
+    } catch(e) {
+      loading.style.display = 'none';
+      content.innerHTML = '<div class="empty-state" style="display:block;"><div class="icon">⚠️</div><p>数据加载失败: ' + e.message + '</p></div>';
+    }
+  }
+
+  // ====== Utility: escape HTML attribute ======
+  function escAttr(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 })();
 </script>
