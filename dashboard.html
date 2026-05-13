@@ -144,13 +144,28 @@ footer a { color:#1a8a5c; text-decoration:none; }
 .history-item .info .title { font-size:0.9em; }
 .history-item .info .meta { font-size:0.78em; color:#999; }
 .history-item .info .meta a { color:#1a8a5c; text-decoration:none; }
+
 .section-title { font-size:1em; font-weight:600; margin:24px 0 14px; color:#444; }
 
+/* Platform toggle */
+.platform-toggle { display:flex; gap:8px; margin-bottom:16px; }
+.platform-btn { flex:1; padding:12px; border:2px solid #ddd; border-radius:10px; background:#fff; font-size:0.95em; font-weight:600; cursor:pointer; transition:all 0.15s; text-align:center; }
+.platform-btn:hover { border-color:#aaa; }
+.platform-btn.active { border-color:#1a8a5c; background:#e8f5e9; color:#1a8a5c; }
+.platform-btn[data-platform="tiktok"].active { border-color:#000; background:#f5f5f5; color:#000; }
+
 @media(max-width:700px){ .analytics-grid { grid-template-columns:1fr; } .analytics-row { grid-template-columns:1fr; } .tab-btn { font-size:0.78em; padding:12px 6px; } .schedule-table th, .schedule-table td { padding:10px 10px; font-size:0.8em; } }
+
+/* TikTok notice */
+.tiktok-notice { display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:0.85em; color:#856404; }
+.tiktok-notice.show { display:block; }
+
+footer { text-align:center; padding:32px; color:#999; font-size:0.8em; }
+footer a { color:#1a8a5c; text-decoration:none; }
 </style>
 </head>
-<body>
 
+<body>
 <div class="topbar">
   <h1>TCM 频道管家</h1>
   <div class="topbar-actions">
@@ -196,7 +211,16 @@ footer a { color:#1a8a5c; text-decoration:none; }
   <!-- ====== TAB 1: 视频发布 ====== -->
   <div class="tab-content active" id="tab1">
     <div class="upload-section" id="upload-section" style="display:none;">
-      <h3>📤 发布视频</h3>
+      <!-- 平台切换 -->
+      <div class="platform-toggle">
+        <button class="platform-btn active" data-platform="youtube">▶ YouTube</button>
+        <button class="platform-btn" data-platform="tiktok">♪ TikTok</button>
+      </div>
+      <h3 id="upload-title">📤 发布到 YouTube</h3>
+      <div class="tiktok-notice" id="tiktok-notice">
+        ♪ TikTok API 审核通过后将自动激活真实发布功能。<br>
+        <span style="font-size:0.85em;opacity:0.8;">当前展示为模拟发布流程，实际 API 调用与 YouTube 使用相同架构。</span>
+      </div>
       <div class="file-area" id="file-area">
         <div class="icon">🎬</div>
         <p>点击选择视频文件 或 拖拽文件到此处</p>
@@ -452,6 +476,34 @@ function uid() {
     fileName.style.display = 'block';
   }
 
+  // ====== Platform toggle (YouTube / TikTok) ======
+  let currentPlatform = 'youtube';
+  const platformBtns = document.querySelectorAll('.platform-btn');
+  const uploadTitle = document.getElementById('upload-title');
+  const uploadBtn = document.getElementById('upload-btn');
+  const tiktokNotice = document.getElementById('tiktok-notice');
+  const privacySelect = document.getElementById('video-privacy');
+
+  platformBtns.forEach(function(btn) {
+    btn.onclick = function() {
+      platformBtns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentPlatform = btn.getAttribute('data-platform');
+
+      if (currentPlatform === 'tiktok') {
+        uploadTitle.textContent = '♪ 发布到 TikTok';
+        uploadBtn.textContent = '发布到 TikTok';
+        tiktokNotice.classList.add('show');
+        privacySelect.style.display = 'none';
+      } else {
+        uploadTitle.textContent = '📤 发布到 YouTube';
+        uploadBtn.textContent = scheduleToggle && scheduleToggle.checked ? '排期发布' : '发布到 YouTube';
+        tiktokNotice.classList.remove('show');
+        privacySelect.style.display = '';
+      }
+    };
+  });
+
   // ====== Schedule toggle ======
   const scheduleToggle = document.getElementById('schedule-toggle-check');
   const scheduleDatetime = document.getElementById('schedule-datetime');
@@ -468,6 +520,40 @@ function uid() {
     const prog = document.getElementById('upload-progress');
     const progFill = document.getElementById('progress-fill');
     const progText = document.getElementById('progress-text');
+
+    // ---- TikTok 模拟发布 ----
+    if (currentPlatform === 'tiktok') {
+      if (!selectedFile) { alert('请选择视频文件'); return; }
+      btn.disabled = true;
+      btn.textContent = '正在发布到 TikTok...';
+      prog.classList.add('show');
+      progText.textContent = '正在连接到 TikTok API...';
+      progFill.style.width = '10%';
+
+      // Simulate OAuth checking
+      await new Promise(function(r) { setTimeout(r, 800); });
+      progText.textContent = '正在上传视频到 TikTok...';
+      progFill.style.width = '40%';
+
+      await new Promise(function(r) { setTimeout(r, 1200); });
+      progText.textContent = 'TikTok 正在处理视频...';
+      progFill.style.width = '70%';
+
+      await new Promise(function(r) { setTimeout(r, 1000); });
+      progFill.style.width = '100%';
+      progText.textContent = '✅ 模拟发布成功 — TikTok API 审核通过后将自动激活真实发布';
+      btn.textContent = '发布到 TikTok';
+      btn.disabled = false;
+
+      // Reset
+      selectedFile = null;
+      fileName.style.display = 'none';
+      document.getElementById('video-title').value = '';
+      document.getElementById('video-desc').value = '';
+      fileInput.value = '';
+      setTimeout(function() { prog.classList.remove('show'); }, 3000);
+      return;
+    }
 
     // If scheduled
     if (scheduleToggle.checked) {
