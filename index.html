@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TCM 频道管家 - 跨平台社交媒体内容管理工具</title>
+<title>TCM Channel Manager</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:#333; line-height:1.6; }
 .hero { background:linear-gradient(135deg,#1a8a5c,#0d6b3d); color:#fff; padding:60px 20px; text-align:center; }
+.hero img { width:64px; height:64px; margin-bottom:15px; border-radius:12px; }
 .hero h1 { font-size:2.5em; margin-bottom:10px; }
 .hero p { font-size:1.1em; opacity:0.9; max-width:600px; margin:auto; }
 .container { max-width:800px; margin:auto; padding:40px 20px; }
@@ -17,44 +21,31 @@ h2 { color:#1a8a5c; margin:30px 0 15px; font-size:1.5em; }
 .feature h3 { color:#1a8a5c; margin-bottom:8px; }
 .feature p { font-size:0.95em; color:#555; }
 
-/* Login Section */
-.login-section { text-align:center; padding:40px 20px; background:#f0f7f3; border-radius:12px; margin:30px 0; }
-.login-section h2 { margin-top:0; }
-.login-section p { color:#555; margin-bottom:25px; }
-.login-buttons { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
-.btn-tiktok, .btn-youtube { display:inline-flex; align-items:center; gap:10px; padding:14px 32px; border-radius:8px; text-decoration:none; font-size:1em; font-weight:600; transition:transform 0.15s,box-shadow 0.15s; cursor:pointer; border:none; }
-.btn-tiktok { background:#000; color:#fff; }
-.btn-tiktok:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(0,0,0,0.3); }
-.btn-youtube { background:#ff0000; color:#fff; }
-.btn-youtube:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(255,0,0,0.3); }
-.btn-icon { font-size:1.5em; line-height:1; }
+.cta-section { text-align:center; padding:40px 20px; background:#f0f7f3; border-radius:12px; margin:30px 0; }
+.cta-section h2 { margin-top:0; }
+.cta-section p { color:#555; margin-bottom:25px; }
+.btn-visitor { display:inline-block; padding:14px 36px; border-radius:8px; background:#1a8a5c; color:#fff; text-decoration:none; font-size:1em; font-weight:600; transition:transform 0.15s,box-shadow 0.15s; border:none; cursor:pointer; }
+.btn-visitor:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(26,138,92,0.3); }
 
 .contact { background:#f5f8f6; text-align:center; padding:30px; border-radius:8px; margin-top:30px; }
 .contact a { color:#1a8a5c; text-decoration:none; }
 footer { text-align:center; padding:20px; color:#888; font-size:0.85em; border-top:1px solid #eee; margin-top:40px; }
-@media(max-width:600px){ .features { grid-template-columns:1fr; } .hero h1 { font-size:1.8em; } .login-buttons { flex-direction:column; align-items:center; } }
+footer a { color:#1a8a5c; }
+@media(max-width:600px){ .features { grid-template-columns:1fr; } .hero h1 { font-size:1.8em; } }
 </style>
 </head>
 <body>
 <div class="hero">
-  <h1>TCM 频道管家</h1>
+  <img src="icon-top.png" alt="TCM Channel Manager">
+  <h1>TCM Channel Manager</h1>
   <p>跨平台社交媒体内容管理工具，助您轻松管理 TikTok、YouTube 等频道。专为出海创作者打造。</p>
 </div>
 <div class="container">
 
-<!-- Login Section -->
-<div class="login-section">
-  <h2>关联您的账户</h2>
-  <p>登录即可管理您的频道并开始自动发布内容。</p>
-  <div class="login-buttons">
-    <a href="login.html" class="btn-tiktok">
-      <span class="btn-icon">♪</span> 使用 TikTok 登录
-    </a>
-    <a href="login.html" class="btn-youtube">
-      <span class="btn-icon">▶</span> 使用 YouTube 登录
-    </a>
-    <p style="margin-top:16px;font-size:0.9em;"><a href="dashboard.html" style="color:#1a8a5c;">已有账户？进入仪表盘 →</a></p>
-  </div>
+<div class="cta-section">
+  <h2>开始使用</h2>
+  <p>无需注册，立即体验完整的频道管理、排期发布和数据分析功能。</p>
+  <a href="login.html" class="btn-visitor">进入应用 →</a>
 </div>
 
 <h2>功能特点</h2>
@@ -78,7 +69,7 @@ footer { text-align:center; padding:20px; color:#888; font-size:0.85em; border-t
 </div>
 
 <h2>关于</h2>
-<p>TCM 频道管家是一款内容管理工具，专为中国出海内容创作者设计。支持 TikTok、YouTube 等主流海外平台，帮助您高效管理多平台频道，实现内容自动化发布。</p>
+<p>TCM Channel Manager 是一款内容管理工具，专为中国出海内容创作者设计。支持 TikTok、YouTube 等主流海外平台，帮助您高效管理多平台频道，实现内容自动化发布。</p>
 
 <h2>平台支持</h2>
 <p>当前支持 TikTok 和 YouTube 集成。更多平台即将上线。</p>
@@ -90,9 +81,9 @@ footer { text-align:center; padding:20px; color:#888; font-size:0.85em; border-t
 
 </div>
 <footer>
-  <a href="terms.html">服务条款</a> &nbsp;|&nbsp; <a href="privacy.html">隐私政策</a>
+  <a href="terms.html">服务条款</a> &nbsp;|&nbsp; <a href="privacy.html">隐私政策</a> &nbsp;|&nbsp; <a href="login.html">访客体验入口</a>
   <br><br>
-  &copy; 2026 TCM 频道管家. All rights reserved.
+  &copy; 2026 TCM Channel Manager. All rights reserved.
 </footer>
 </body>
 </html>
