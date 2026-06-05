@@ -201,6 +201,8 @@ footer a { color:#1a8a5c; text-decoration:none; }
     <h2>尚未连接 YouTube</h2>
     <p>连接您的 YouTube 频道即可开始管理内容与自动发布。</p>
     <a id="connect-btn" href="#">连接 YouTube 频道</a>
+    <br><br>
+    <a id="connect-tt-btn" href="#" style="display:inline-flex;align-items:center;gap:8px;background:#000;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.95em;">♪ 连接 TikTok 账号</a>
   </div>
 
   <!-- Tabs -->
@@ -220,10 +222,6 @@ footer a { color:#1a8a5c; text-decoration:none; }
         <button class="platform-btn" data-platform="tiktok">♪ TikTok</button>
       </div>
       <h3 id="upload-title">📤 发布到 YouTube</h3>
-      <div class="tiktok-notice" id="tiktok-notice">
-        ♪ TikTok API 审核通过后将自动激活真实发布功能。<br>
-        <span style="font-size:0.85em;opacity:0.8;">当前展示为模拟发布流程，实际 API 调用与 YouTube 使用相同架构。</span>
-      </div>
       <div class="file-area" id="file-area">
         <div class="icon">🎬</div>
         <p>点击选择视频文件 或 拖拽文件到此处</p>
@@ -380,8 +378,12 @@ function uid() {
 (function() {
   const params = new URLSearchParams(window.location.search);
   const justConnected = params.get('connected') === 'youtube';
+  const justConnectedTT = params.get('connected') === 'tiktok';
 
   if (justConnected && window.history) {
+    window.history.replaceState({}, '', DASHBOARD);
+  }
+  if (justConnectedTT && window.history) {
     window.history.replaceState({}, '', DASHBOARD);
   }
 
@@ -399,8 +401,12 @@ function uid() {
   const elDisconnect = document.getElementById('disconnect-btn');
   const elUpload = document.getElementById('upload-section');
 
-  // Connect button
+  // Connect buttons
   document.getElementById('connect-btn').href = WORKER + '/auth?user_id=' + encodeURIComponent(userId);
+  document.getElementById('connect-tt-btn').onclick = function(e) {
+    e.preventDefault();
+    window.location.href = WORKER + '/auth/tiktok?user_id=' + encodeURIComponent(userId);
+  };
 
   // ====== Tab switching ======
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -481,10 +487,10 @@ function uid() {
 
   // ====== Platform toggle (YouTube / TikTok) ======
   let currentPlatform = 'youtube';
+  let tiktokConnected = false;
   const platformBtns = document.querySelectorAll('.platform-btn');
   const uploadTitle = document.getElementById('upload-title');
   const uploadBtn = document.getElementById('upload-btn');
-  const tiktokNotice = document.getElementById('tiktok-notice');
   const privacySelect = document.getElementById('video-privacy');
 
   platformBtns.forEach(function(btn) {
@@ -496,12 +502,20 @@ function uid() {
       if (currentPlatform === 'tiktok') {
         uploadTitle.textContent = '♪ 发布到 TikTok';
         uploadBtn.textContent = '发布到 TikTok';
-        tiktokNotice.classList.add('show');
         privacySelect.style.display = 'none';
+        if (!tiktokConnected) {
+          if (confirm('尚未连接 TikTok，是否前往连接 TikTok 账号？')) {
+            window.location.href = WORKER + '/auth/tiktok?user_id=' + encodeURIComponent(userId);
+          }
+          // Switch back to YouTube
+          platformBtns.forEach(function(b) {
+            if (b.getAttribute('data-platform') === 'youtube') b.click();
+          });
+          return;
+        }
       } else {
         uploadTitle.textContent = '📤 发布到 YouTube';
         uploadBtn.textContent = scheduleToggle && scheduleToggle.checked ? '排期发布' : '发布到 YouTube';
-        tiktokNotice.classList.remove('show');
         privacySelect.style.display = '';
       }
     };
@@ -524,37 +538,70 @@ function uid() {
     const progFill = document.getElementById('progress-fill');
     const progText = document.getElementById('progress-text');
 
-    // ---- TikTok 模拟发布 ----
+    // ---- TikTok 发布 ----
     if (currentPlatform === 'tiktok') {
       if (!selectedFile) { alert('请选择视频文件'); return; }
+      if (!tiktokConnected) { alert('请先连接 TikTok 账号'); return; }
+
       btn.disabled = true;
       btn.textContent = '正在发布到 TikTok...';
       prog.classList.add('show');
-      progText.textContent = '正在连接到 TikTok API...';
-      progFill.style.width = '10%';
 
-      // Simulate OAuth checking
-      await new Promise(function(r) { setTimeout(r, 800); });
-      progText.textContent = '正在上传视频到 TikTok...';
-      progFill.style.width = '40%';
+      // TikTok uses a multi-step upload: init → upload → publish
+      try {
+        progText.textContent = '正在初始化 TikTok 上传...';
+        progFill.style.width = '10%';
 
-      await new Promise(function(r) { setTimeout(r, 1200); });
-      progText.textContent = 'TikTok 正在处理视频...';
-      progFill.style.width = '70%';
+        // Step 1: Initialize upload (get upload URL)
+        const initResp = await fetch(WORKER + '/tiktok/upload-init?user_id=' + encodeURIComponent(userId) + '&title=' + encodeURIComponent(title) + '&size=' + selectedFile.size, {
+          method: 'POST'
+        });
+        const initData = await initResp.json();
+        if (initData.error) throw new Error(initData.error);
 
-      await new Promise(function(r) { setTimeout(r, 1000); });
-      progFill.style.width = '100%';
-      progText.textContent = '✅ 模拟发布成功 — TikTok API 审核通过后将自动激活真实发布';
-      btn.textContent = '发布到 TikTok';
+        progText.textContent = '正在上传视频到 TikTok...';
+        progFill.style.width = '30%';
+
+        // Step 2: Upload the file
+        const uploadResp = await fetch(initData.upload_url, {
+          method: 'PUT',
+          headers: { 'Content-Type': selectedFile.type || 'video/mp4', 'Content-Length': selectedFile.size },
+          body: selectedFile
+        });
+        if (!uploadResp.ok) throw new Error('视频上传失败');
+
+        progText.textContent = '正在提交发布...';
+        progFill.style.width = '70%';
+
+        // Step 3: Publish
+        const publishResp = await fetch(WORKER + '/tiktok/publish?user_id=' + encodeURIComponent(userId), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: title,
+            description: document.getElementById('video-desc').value,
+            publish_id: initData.publish_id
+          })
+        });
+        const publishData = await publishResp.json();
+        if (publishData.error) throw new Error(publishData.error);
+
+        progFill.style.width = '100%';
+        progText.textContent = '✅ 发布到 TikTok 成功！';
+        btn.textContent = '发布到 TikTok';
+
+        selectedFile = null;
+        fileName.style.display = 'none';
+        document.getElementById('video-title').value = '';
+        document.getElementById('video-desc').value = '';
+        fileInput.value = '';
+        setTimeout(function() { prog.classList.remove('show'); }, 3000);
+
+      } catch(e) {
+        progText.textContent = '❌ ' + e.message;
+        btn.textContent = '发布到 TikTok';
+      }
       btn.disabled = false;
-
-      // Reset
-      selectedFile = null;
-      fileName.style.display = 'none';
-      document.getElementById('video-title').value = '';
-      document.getElementById('video-desc').value = '';
-      fileInput.value = '';
-      setTimeout(function() { prog.classList.remove('show'); }, 3000);
       return;
     }
 
@@ -700,6 +747,9 @@ function uid() {
         loadMyVideos();
         loadSchedules();
         loadAnalytics();
+
+        // Check TikTok connection
+        checkTikTokConnection();
       } else {
         elLoading.style.display = 'none';
         elNotConnected.classList.add('show');
@@ -891,6 +941,34 @@ function uid() {
     } catch(e) {
       loading.style.display = 'none';
       content.innerHTML = '<div class="empty-state" style="display:block;"><div class="icon">⚠️</div><p>数据加载失败: ' + e.message + '</p></div>';
+    }
+  }
+
+  // ====== Check TikTok connection ======
+  async function checkTikTokConnection() {
+    try {
+      let resp = await fetch(WORKER + '/tiktok/me?user_id=' + encodeURIComponent(userId));
+      if (resp.status === 401) {
+        tiktokConnected = false;
+        return;
+      }
+      let data = await resp.json();
+      if (data.data && data.data.user) {
+        tiktokConnected = true;
+        let u = data.data.user;
+        // Show TikTok info in connected banner
+        elName.textContent = u.display_name || 'TikTok 账号';
+        elStats.textContent = '粉丝: ' + (u.follower_count ? parseInt(u.follower_count).toLocaleString() : '--') + ' | 视频: ' + (u.video_count || '--');
+        if (u.avatar_url) {
+          elAvatar.innerHTML = '<img src="' + u.avatar_url + '" alt="avatar">';
+        }
+        // If just connected from TikTok, switch to TikTok tab
+        if (justConnectedTT) {
+          document.querySelector('[data-platform="tiktok"]').click();
+        }
+      }
+    } catch(e) {
+      tiktokConnected = false;
     }
   }
 
